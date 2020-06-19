@@ -1,8 +1,8 @@
 {
     "name": "simplecomplex/explorable",
     "type": "library",
-    "description": "Time extends native DateTime class to fix shortcomings and defects, and provide more, simpler and safer getters and setters",
-    "keywords": ["utils","time","datetime","PHP"],
+    "description": "Foreach'ing protected members made simple",
+    "keywords": ["utils","PHP"],
     "homepage": "https://github.com/simplecomplex/php-explorable",
     "license": "MIT",
     "authors": [
