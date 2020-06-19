@@ -1,0 +1,29 @@
+{
+    "name": "simplecomplex/explorable",
+    "type": "library",
+    "description": "Time extends native DateTime class to fix shortcomings and defects, and provide more, simpler and safer getters and setters",
+    "keywords": ["utils","time","datetime","PHP"],
+    "homepage": "https://github.com/simplecomplex/php-explorable",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jacob Friis Mathiasen",
+            "email": "jacob.friis@simplecomplex.net"
+        }
+    ],
+    "require": {
+        "php": ">=7.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.5"
+    },
+    "suggest": {
+        "simplecomplex/inspect": "Better variable dumps and trace."
+    },
+    "autoload": {
+        "psr-4": {
+            "SimpleComplex\\Explorable\\": "src/",
+            "SimpleComplex\\Tests\\Explorable\\": "tests/src/"
+        }
+    }
+}
