@@ -22,6 +22,10 @@ abstract class Explorable implements ExplorableInterface
      * and foreach'ing.
      *
      * Keys are property name, values may be anything.
+     * Allows a child class to extend parent's list by doing
+     * const EXPLORABLE_PROPERTIES = [
+     *   'childvar' => true,
+     * ] + ParentClass::EXPLORABLE_PROPERTIES;
      *
      * @var mixed[]
      */
@@ -35,6 +39,10 @@ abstract class Explorable implements ExplorableInterface
      * actual-declared-instance-properties algo.
      *
      * Keys are property name, values may be anything.
+     * Allows a child class to extend parent's list by doing
+     * const EXPLORABLE_PROPERTIES = [
+     *   'childvar' => true,
+     * ] + ParentClass::EXPLORABLE_PROPERTIES;
      *
      * @var mixed[]
      */
@@ -73,7 +81,7 @@ abstract class Explorable implements ExplorableInterface
      * If class var explorableKeys is empty:
      * Uses keys of class constant EXPLORABLE_PROPERTIES, unless empty.
      * Uses names of actual declared instance properties as fallback,
-     * expect for keys listed in class constant NON_EXPLORABLE_PROPERTIES.
+     * except for keys listed in class constant NON_EXPLORABLE_PROPERTIES.
      * @see Explorable::EXPLORABLE_PROPERTIES
      * @see Explorable::NON_EXPLORABLE_PROPERTIES
      */
