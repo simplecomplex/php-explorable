@@ -10,8 +10,8 @@ declare(strict_types=1);
 namespace SimpleComplex\Explorable;
 
 /**
- * Extend to expose a set list of protected/public properties for counting
- * and foreach'ing.
+ * Implement to expose a set list of protected/public properties for getting,
+ * counting and foreach'ing.
  *
  * @package SimpleComplex\Explorable
  */

@@ -144,13 +144,13 @@ abstract class Explorable implements ExplorableInterface
      * Uses __get() method to support custom initialization/retrieval.
      * @see Explorable::__get()
      *
-     * @param string|int $name
+     * @param string|int $key
      *
      * @return bool
      */
-    public function __isset($name) : bool
+    public function __isset($key) : bool
     {
-        return in_array($name, static::$explorableKeys) && $this->__get($name) !== null;
+        return in_array($key, static::$explorableKeys) && $this->__get($key) !== null;
     }
 
     // Countable.---------------------------------------------------------------
