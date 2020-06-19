@@ -10,48 +10,147 @@ declare(strict_types=1);
 namespace SimpleComplex\Explorable;
 
 /**
- * Extend to expose a set list of protected/public properties for counting
- * and foreach'ing.
+ * Extend to expose a set list of protected/public properties for getting,
+ * counting and foreach'ing.
  *
  * @package SimpleComplex\Explorable
  */
-abstract class Explorable implements \Countable, \Iterator /*~ Traversable*/, \JsonSerializable
+abstract class Explorable implements ExplorableInterface
 {
     /**
-     * List of names of properties (private, protected or public) which should
-     * be exposed as accessibles in count()'ing and foreach'ing.
+     * Optional list of properties accessible when getting, counting
+     * and foreach'ing.
      *
-     * Private/protected properties may also be readable via 'magic' __get(),
-     * if the __get() uses explorableIndex.
+     * Keys are property name, values may be anything.
+     *
+     * @var mixed[]
+     */
+    const EXPLORABLE_PROPERTIES = [];
+
+    /**
+     * Optional list of hidden properties when getting, counting
+     * and foreach'ing.
+     *
+     * Gets subtracted when constructor uses the fallback
+     * actual-declared-instance-properties algo.
+     *
+     * Keys are property name, values may be anything.
+     *
+     * @var mixed[]
+     */
+    const NON_EXPLORABLE_PROPERTIES = [];
+
+    /**
+     * List of names of properties accessible when count()'ing and foreach'ing.
      *
      * @var string[]
      */
-    protected $explorableIndex = [];
+    protected static $explorableKeys = [];
 
     /**
-     * Generates index of explorable properties based on the class' declared
-     * instance vars except $explorableIndex and arg $nonExplorables.
+     * Copy of class var explorableKeys used as cursor for iteration.
      *
-     * For extendings class' constructor (typically).
+     * Extending class should _not_ alter this property, only read it.
      *
-     * @param string[] $nonExplorables
-     *      Optional list of more non-explorable properties.
+     * @see Explorable::$explorableKeys
+     *
+     * @var string[]
      */
-    protected function explorablesAutoDefine(array $nonExplorables = [])
+    protected $explorableCursor = [];
+
+
+    /**
+     * Prepares iteration cursor and class property list if they are empty.
+     *
+     * Extending class' constructor is free to define class var explorableKeys
+     * in a different manner.
+     *
+     * Does nothing if the instance iteration cursor is non-empty.
+     * Otherwise copies class var explorableKeys to explorableCursor.
+     * @see Explorable::$explorableCursor
+     * @see Explorable::$explorableKeys
+     *
+     * If class var explorableKeys is empty:
+     * Uses keys of class constant EXPLORABLE_PROPERTIES, unless empty.
+     * Uses names of actual declared instance properties as fallback,
+     * expect for keys listed in class constant NON_EXPLORABLE_PROPERTIES.
+     * @see Explorable::EXPLORABLE_PROPERTIES
+     * @see Explorable::NON_EXPLORABLE_PROPERTIES
+     */
+    public function __construct()
     {
-        // get_object_vars() also includes unitialized (no default) vars.
-        $property_names = array_keys(get_object_vars($this));
-        $this->explorableIndex = array_diff($property_names, ['explorableIndex'], $nonExplorables);
+        // No work if cursor already populated.
+        if (!$this->explorableCursor) {
+            // Try copying from class var; this instance may not be the first.
+            $keys = static::$explorableKeys;
+            if (!$keys) {
+                // This instance _is_ the first.
+                // Try copying from class constant.
+                $keys = array_keys(static::EXPLORABLE_PROPERTIES);
+                if (!$keys) {
+                    // Fallback: use actual declared properties.
+                    // get_object_vars() also includes unitialized (null) vars.
+                    $keys = array_keys(get_object_vars($this));
+                    $keys = array_diff($keys, ['explorableCursor'], array_keys(static::NON_EXPLORABLE_PROPERTIES));
+                }
+                // Save copy for class.
+                static::$explorableKeys = $keys;
+            }
+            // Save copy for instance iteration.
+            $this->explorableCursor = $keys;
+        }
     }
 
     /**
+     * Get protected property.
+     *
+     * @param string $key
+     *
+     * @return mixed
+     *
+     * @throws \OutOfBoundsException
+     *      If no such instance property.
+     */
+    public function __get(string $key)
+    {
+        if (in_array($key, static::$explorableKeys)) {
+            return $this->{$key};
+        }
+        throw new \OutOfBoundsException(get_class($this) . ' instance exposes no property[' . $key . '].');
+    }
+
+    /**
+     * Attempt to set protected property.
+     *
+     * @param string $key
+     * @param mixed|null $value
+     *
+     * @return void
+     *
+     * @throws \OutOfBoundsException
+     *      If no such instance property.
+     * @throws \RuntimeException
+     *      If that instance property is read-only.
+     */
+    public function __set(string $key, $value)
+    {
+        if (in_array($key, static::$explorableKeys)) {
+            throw new \RuntimeException(get_class($this) . ' instance property[' . $key . '] is read-only.');
+        }
+        throw new \OutOfBoundsException(get_class($this) . ' instance exposes no property[' . $key . '].');
+    }
+
+    /**
+     * Uses __get() method to support custom initialization/retrieval.
+     * @see Explorable::__get()
+     *
      * @param string|int $name
      *
      * @return bool
      */
     public function __isset($name) : bool
     {
-        return in_array($name, $this->explorableIndex, true) && isset($this->{$name});
+        return in_array($name, static::$explorableKeys) && $this->__get($name) !== null;
     }
 
     // Countable.---------------------------------------------------------------
@@ -61,9 +160,9 @@ abstract class Explorable implements \Countable, \Iterator /*~ Traversable*/, \J
      *
      * @return int
      */
-    public function count()
+    public function count() : int
     {
-        return count($this->explorableIndex);
+        return count(static::$explorableKeys);
     }
 
 
@@ -74,9 +173,9 @@ abstract class Explorable implements \Countable, \Iterator /*~ Traversable*/, \J
      *
      * @return void
      */
-    public function rewind() /*: void*/
+    public function rewind() : void
     {
-        reset($this->explorableIndex);
+        reset($this->explorableCursor);
     }
 
     /**
@@ -86,17 +185,20 @@ abstract class Explorable implements \Countable, \Iterator /*~ Traversable*/, \J
      */
     public function key() : string
     {
-        return current($this->explorableIndex);
+        return current($this->explorableCursor);
     }
 
     /**
+     * Uses __get() method to support custom initialization/retrieval.
+     * @see Explorable::__get()
+     *
      * @see \Iterator::current()
      *
      * @return mixed
      */
     public function current()
     {
-        return $this->{current($this->explorableIndex)};
+        return $this->__get(current($this->explorableCursor));
     }
 
     /**
@@ -104,9 +206,9 @@ abstract class Explorable implements \Countable, \Iterator /*~ Traversable*/, \J
      *
      * @return void
      */
-    public function next() /*: void*/
+    public function next() : void
     {
-        next($this->explorableIndex);
+        next($this->explorableCursor);
     }
 
     /**
@@ -117,12 +219,18 @@ abstract class Explorable implements \Countable, \Iterator /*~ Traversable*/, \J
     public function valid() : bool
     {
         // The null check is cardinal; without it foreach runs out of bounds.
-        $key = key($this->explorableIndex);
-        return $key !== null && $key < count($this->explorableIndex);
+        $key = key($this->explorableCursor);
+        return $key !== null && $key < count($this->explorableCursor);
     }
+
+
+    // Dumping/casting.---------------------------------------------------------
 
     /**
      * Dumps publicly readable properties to standard object.
+     *
+     * Uses __get() method to support custom initialization/retrieval.
+     * @see Explorable::__get()
      *
      * @param bool $recursive
      *
@@ -131,14 +239,13 @@ abstract class Explorable implements \Countable, \Iterator /*~ Traversable*/, \J
     public function toObject(bool $recursive = false) : \stdClass
     {
         $o = new \stdClass();
-        if (!$recursive) {
-            foreach ($this->explorableIndex as $property) {
-                $o->{$property} = $this->{$property};
+        foreach ($this->explorableCursor as $key) {
+            $value = $this->__get($key);
+            if ($recursive && $value instanceof ExplorableInterface) {
+                $o->{$key} = $value->toObject(true);
             }
-        } else {
-            foreach ($this->explorableIndex as $property) {
-                $value = $this->{$property};
-                $o->{$property} = !($value instanceof Explorable) ? $value : $value->toObject(true);
+            else {
+                $o->{$key} = $value;
             }
         }
         return $o;
@@ -147,6 +254,9 @@ abstract class Explorable implements \Countable, \Iterator /*~ Traversable*/, \J
     /**
      * Dumps publicly readable properties to array.
      *
+     * Uses __get() method to support custom initialization/retrieval.
+     * @see Explorable::__get()
+     *
      * @param bool $recursive
      *
      * @return array
@@ -154,69 +264,28 @@ abstract class Explorable implements \Countable, \Iterator /*~ Traversable*/, \J
     public function toArray(bool $recursive = false) : array
     {
         $a = [];
-        if (!$recursive) {
-            foreach ($this->explorableIndex as $property) {
-                $a[$property] = $this->{$property};
+        foreach ($this->explorableCursor as $key) {
+            $value = $this->__get($key);
+            if ($recursive && $value instanceof ExplorableInterface) {
+                $a[$key] = $value->toObject(true);
             }
-        } else {
-            foreach ($this->explorableIndex as $property) {
-                $value = $this->{$property};
-                $a[$property] = !($value instanceof Explorable) ? $value : $value->toArray(true);
+            else {
+                $a[$key] = $value;
             }
         }
         return $a;
     }
 
+
+    // JsonSerializable.--------------------------------------------------------
+
     /**
      * JSON serializes to object listing all publicly readable properties.
      *
-     * @return string
+     * @return object
      */
     public function jsonSerialize()
     {
         return $this->toObject(true);
     }
-
-    /**
-     * Do implement magic getter and setter if any exposed property is protected.
-     *
-     * @see \SimpleComplex\Explorable\ExplorableGetSetTrait
-     */
-
-    /*
-     * Get a read-only property.
-     *
-     * @param string $name
-     *
-     * @return mixed
-     *
-     * @throws \OutOfBoundsException
-     *      If no such instance property.
-     *
-    public function __get(string $name)
-    {
-        if (in_array($name, $this->explorableIndex, true)) {
-            return $this->{$name};
-        }
-        throw new \OutOfBoundsException(get_class($this) . ' instance exposes no property[' . $name . '].');
-    }*/
-
-    /*
-     * @param string $name
-     * @param mixed|null $value
-     *
-     * @return void
-     *
-     * @throws \OutOfBoundsException
-     *      If no such instance property.
-     * @throws \RuntimeException
-     *      If that instance property is read-only.
-     *
-    public function __set(string $name, $value)
-    {
-        if (in_array($name, $this->explorableIndex, true)) {
-            throw new \RuntimeException(get_class($this) . ' instance property[' . $name . '] is read-only.');
-        }
-        throw new \OutOfBoundsException(get_class($this) . ' instance exposes no property[' . $name . '].');
-    }*/
 }
