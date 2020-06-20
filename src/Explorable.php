@@ -36,7 +36,7 @@ abstract class Explorable implements ExplorableInterface
      * and foreach'ing.
      *
      * Gets subtracted when constructor populates class var
-     * explorableKeys.
+     * explorableKeys[class].
      *
      * Keys are property name, values may be anything.
      * Allows a child class to extend parent's list by doing
@@ -49,20 +49,17 @@ abstract class Explorable implements ExplorableInterface
     const EXPLORABLE_HIDDEN = [];
 
     /**
-     * List of names of properties accessible when count()'ing and foreach'ing.
-     *
-     * NB: A class extending a concrete child of Explorable _must_ declare it's
-     * own $explorableKeys, unless it exposes exactly the same properties as the
-     * parent; otherwise the two concrete classes will use the same list.
+     * List of names of properties accessible when count()'ing and foreach'ing,
+     * by class name.
      *
      * @var string[]
      */
-    protected static $explorableKeys = [];
+    protected static $explorableKeys = [
+        // '\\SimpleComplex\\Explorable\\Explorable => [],
+    ];
 
     /**
-     * Copy of class var explorableKeys used as cursor for iteration.
-     *
-     * Extending class should _not_ alter this property, only read it.
+     * Copy of class var explorableKeys[class] used as cursor for iteration.
      *
      * @see Explorable::$explorableKeys
      *
@@ -74,15 +71,15 @@ abstract class Explorable implements ExplorableInterface
     /**
      * Prepares iteration cursor and class property list if they are empty.
      *
-     * Extending class' constructor is free to define class var explorableKeys
+     * Extending class' constructor is free to define explorableKeys[class]
      * in a different manner.
      *
      * Does nothing if the instance iteration cursor is non-empty.
-     * Otherwise copies class var explorableKeys to explorableCursor.
+     * Otherwise copies class var explorableKeys[class] to explorableCursor.
      * @see Explorable::$explorableCursor
      * @see Explorable::$explorableKeys
      *
-     * If class var explorableKeys is empty:
+     * If class var explorableKeys[class] is non-existent:
      * Uses keys of class constant EXPLORABLE_PROPERTIES, unless empty.
      * Uses names of actual declared instance properties as fallback,
      * except for keys listed in class constant NON_EXPLORABLE_PROPERTIES.
@@ -94,8 +91,11 @@ abstract class Explorable implements ExplorableInterface
         // No work if cursor already populated.
         if (!$this->explorableCursor) {
             // Try copying from class var; this instance may not be the first.
-            $keys = static::$explorableKeys;
-            if (!$keys) {
+            $class = get_class();
+            if (isset(static::$explorableKeys[$class])) {
+                $keys = static::$explorableKeys[$class];
+            }
+            else {
                 // This instance _is_ the first.
                 // Try copying from class constant.
                 $keys = array_keys(static::EXPLORABLE_VISIBLE);
@@ -107,7 +107,7 @@ abstract class Explorable implements ExplorableInterface
                 // Subtract hidden properties.
                 $keys = array_diff($keys, ['explorableCursor'], array_keys(static::EXPLORABLE_HIDDEN));
                 // Save copy for class.
-                static::$explorableKeys = $keys;
+                static::$explorableKeys[$class] = $keys;
             }
             // Save copy for instance iteration.
             $this->explorableCursor = $keys;
@@ -126,7 +126,7 @@ abstract class Explorable implements ExplorableInterface
      */
     public function __get(string $key)
     {
-        if (in_array($key, static::$explorableKeys)) {
+        if (in_array($key, $this->explorableCursor)) {
             return $this->{$key};
         }
         throw new \OutOfBoundsException(get_class($this) . ' instance exposes no property[' . $key . '].');
@@ -147,7 +147,7 @@ abstract class Explorable implements ExplorableInterface
      */
     public function __set(string $key, $value)
     {
-        if (in_array($key, static::$explorableKeys)) {
+        if (in_array($key, $this->explorableCursor)) {
             throw new \RuntimeException(get_class($this) . ' instance property[' . $key . '] is read-only.');
         }
         throw new \OutOfBoundsException(get_class($this) . ' instance exposes no property[' . $key . '].');
@@ -160,10 +160,11 @@ abstract class Explorable implements ExplorableInterface
      * @param string|int $key
      *
      * @return bool
+     *      False: no such property, or the value is null.
      */
     public function __isset($key) : bool
     {
-        return in_array($key, static::$explorableKeys) && $this->__get($key) !== null;
+        return in_array($key, $this->explorableCursor) && $this->__get($key) !== null;
     }
 
     // Countable.---------------------------------------------------------------
@@ -175,7 +176,7 @@ abstract class Explorable implements ExplorableInterface
      */
     public function count() : int
     {
-        return count(static::$explorableKeys);
+        return count($this->explorableCursor);
     }
 
 
