@@ -11,7 +11,7 @@ namespace SimpleComplex\Explorable;
 
 /**
  * Implement to expose a set list of protected/public properties for getting,
- * counting and foreach'ing.
+ * counting, foreach'ing and JSON-serialization.
  *
  * @package SimpleComplex\Explorable
  */

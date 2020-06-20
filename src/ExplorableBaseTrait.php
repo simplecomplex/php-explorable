@@ -10,51 +10,52 @@ declare(strict_types=1);
 namespace SimpleComplex\Explorable;
 
 /**
- * Extend to expose a list of protected/public properties for getting,
- * counting, foreach'ing and JSON-serialization.
+ * Trait providing means for explorable properties discovery
+ * plus \Countable, \Iterator implementation.
  *
- * Declare accessible properties in class constant EXPLORABLE_VISIBLE,
- * or rely on discovery of declared instance vars.
- * @see Explorable::explorablePrepare()
+ * Using class must declare class constants:
+ * const EXPLORABLE_VISIBLE = [];
+ * const EXPLORABLE_HIDDEN = [];
  *
- * IMPORTANT: Extending class _must_ declare it's own
- * protected static $explorableKeys;
+ * @see Explorable
  *
- * Prepares lazily; on external attempt to access or iterate.
+ *
+ * Tell IDE about apparantly absent properties.
+ * @mixin Explorable
  *
  * @package SimpleComplex\Explorable
  */
-abstract class Explorable implements ExplorableInterface
+trait ExplorableBaseTrait
 {
-    /**
-     * Optional list of properties accessible when getting, counting
-     * and foreach'ing.
-     *
-     * Keys are property names, values may be anything.
-     * Allows a child class to extend parent's list by doing
-     * const EXPLORABLE_VISIBLE = [
-     *   'childvar' => true,
-     * ] + ParentClass::EXPLORABLE_VISIBLE;
-     *
-     * @var mixed[]
-     */
-    const EXPLORABLE_VISIBLE = [];
-
-    /**
-     * Optional list of hidden properties when getting, counting
-     * and foreach'ing.
-     *
-     * Gets subtracted when constructor populates class var explorableKeys.
-     *
-     * Keys are property names, values may be anything.
-     * Allows a child class to extend parent's list by doing
-     * const EXPLORABLE_HIDDEN = [
-     *   'childvar' => true,
-     * ] + ParentClass::EXPLORABLE_HIDDEN;
-     *
-     * @var mixed[]
-     */
-    const EXPLORABLE_HIDDEN = [];
+//    /**
+//     * Optional list of properties accessible when getting, counting
+//     * and foreach'ing.
+//     *
+//     * Keys are property names, values may be anything.
+//     * Allows a child class to extend parent's list by doing
+//     * const EXPLORABLE_VISIBLE = [
+//     *   'childvar' => true,
+//     * ] + ParentClass::EXPLORABLE_VISIBLE;
+//     *
+//     * @var mixed[]
+//     */
+//    const EXPLORABLE_VISIBLE = [];
+//
+//    /**
+//     * Optional list of hidden properties when getting, counting
+//     * and foreach'ing.
+//     *
+//     * Gets subtracted when constructor populates class var explorableKeys.
+//     *
+//     * Keys are property names, values may be anything.
+//     * Allows a child class to extend parent's list by doing
+//     * const EXPLORABLE_HIDDEN = [
+//     *   'childvar' => true,
+//     * ] + ParentClass::EXPLORABLE_HIDDEN;
+//     *
+//     * @var mixed[]
+//     */
+//    const EXPLORABLE_HIDDEN = [];
 
     /**
      * List of names of properties accessible when count()'ing and foreach'ing,
@@ -69,7 +70,7 @@ abstract class Explorable implements ExplorableInterface
      *
      * @var string[]|null
      */
-    private static $explorableKeys;
+    protected static $explorableKeys;
 
     /**
      * Copy of class var explorableKeys used as cursor for iteration.
@@ -122,55 +123,6 @@ abstract class Explorable implements ExplorableInterface
             // Save copy for instance iteration.
             $this->explorableCursor = $keys;
         }
-    }
-
-    /**
-     * Get protected property.
-     *
-     * @param string $key
-     *
-     * @return mixed
-     *
-     * @throws \OutOfBoundsException
-     *      If no such instance property.
-     */
-    public function __get(string $key)
-    {
-        // IMPORTANT: do same lazy preparation in overriding method.
-        if (!$this->explorableCursor) {
-            $this->explorablePrepare();
-        }
-
-        if (in_array($key, $this->explorableCursor)) {
-            return $this->{$key};
-        }
-        throw new \OutOfBoundsException(get_class($this) . ' instance exposes no property[' . $key . '].');
-    }
-
-    /**
-     * Attempt to set protected property.
-     *
-     * @param string $key
-     * @param mixed|null $value
-     *
-     * @return void
-     *
-     * @throws \OutOfBoundsException
-     *      If no such instance property.
-     * @throws \RuntimeException
-     *      If that instance property is read-only.
-     */
-    public function __set(string $key, $value)
-    {
-        // IMPORTANT: do same lazy preparation in overriding method.
-        if (!$this->explorableCursor) {
-            $this->explorablePrepare();
-        }
-
-        if (in_array($key, $this->explorableCursor)) {
-            throw new \RuntimeException(get_class($this) . ' instance property[' . $key . '] is read-only.');
-        }
-        throw new \OutOfBoundsException(get_class($this) . ' instance exposes no property[' . $key . '].');
     }
 
     /**
@@ -283,79 +235,5 @@ abstract class Explorable implements ExplorableInterface
         // The null check is cardinal; without it foreach runs out of bounds.
         $key = key($this->explorableCursor);
         return $key !== null && $key < count($this->explorableCursor);
-    }
-
-
-    // Dumping/casting.---------------------------------------------------------
-
-    /**
-     * Dumps publicly readable properties to standard object.
-     *
-     * Uses __get() method to support custom initialization/retrieval.
-     * @see Explorable::__get()
-     *
-     * @param bool $recursive
-     *
-     * @return \stdClass
-     */
-    public function toObject(bool $recursive = false) : \stdClass
-    {
-        if (!$this->explorableCursor) {
-            $this->explorablePrepare();
-        }
-
-        $o = new \stdClass();
-        foreach ($this->explorableCursor as $key) {
-            $value = $this->__get($key);
-            if ($recursive && $value instanceof ExplorableInterface) {
-                $o->{$key} = $value->toObject(true);
-            }
-            else {
-                $o->{$key} = $value;
-            }
-        }
-        return $o;
-    }
-
-    /**
-     * Dumps publicly readable properties to array.
-     *
-     * Uses __get() method to support custom initialization/retrieval.
-     * @see Explorable::__get()
-     *
-     * @param bool $recursive
-     *
-     * @return array
-     */
-    public function toArray(bool $recursive = false) : array
-    {
-        if (!$this->explorableCursor) {
-            $this->explorablePrepare();
-        }
-
-        $a = [];
-        foreach ($this->explorableCursor as $key) {
-            $value = $this->__get($key);
-            if ($recursive && $value instanceof ExplorableInterface) {
-                $a[$key] = $value->toObject(true);
-            }
-            else {
-                $a[$key] = $value;
-            }
-        }
-        return $a;
-    }
-
-
-    // JsonSerializable.--------------------------------------------------------
-
-    /**
-     * JSON serializes to object listing all publicly readable properties.
-     *
-     * @return object
-     */
-    public function jsonSerialize()
-    {
-        return $this->toObject(true);
     }
 }
