@@ -29,14 +29,14 @@ abstract class Explorable implements ExplorableInterface
      *
      * @var mixed[]
      */
-    const EXPLORABLE_PROPERTIES = [];
+    const EXPLORABLE_VISIBLE = [];
 
     /**
      * Optional list of hidden properties when getting, counting
      * and foreach'ing.
      *
-     * Gets subtracted when constructor uses the fallback
-     * actual-declared-instance-properties algo.
+     * Gets subtracted when constructor populates class var
+     * explorableKeys.
      *
      * Keys are property name, values may be anything.
      * Allows a child class to extend parent's list by doing
@@ -46,10 +46,14 @@ abstract class Explorable implements ExplorableInterface
      *
      * @var mixed[]
      */
-    const NON_EXPLORABLE_PROPERTIES = [];
+    const EXPLORABLE_HIDDEN = [];
 
     /**
      * List of names of properties accessible when count()'ing and foreach'ing.
+     *
+     * NB: A class extending a concrete child of Explorable _must_ declare it's
+     * own $explorableKeys, unless it exposes exactly the same properties as the
+     * parent; otherwise the two concrete classes will use the same list.
      *
      * @var string[]
      */
@@ -82,8 +86,8 @@ abstract class Explorable implements ExplorableInterface
      * Uses keys of class constant EXPLORABLE_PROPERTIES, unless empty.
      * Uses names of actual declared instance properties as fallback,
      * except for keys listed in class constant NON_EXPLORABLE_PROPERTIES.
-     * @see Explorable::EXPLORABLE_PROPERTIES
-     * @see Explorable::NON_EXPLORABLE_PROPERTIES
+     * @see Explorable::EXPLORABLE_VISIBLE
+     * @see Explorable::EXPLORABLE_HIDDEN
      */
     public function __construct()
     {
@@ -94,13 +98,14 @@ abstract class Explorable implements ExplorableInterface
             if (!$keys) {
                 // This instance _is_ the first.
                 // Try copying from class constant.
-                $keys = array_keys(static::EXPLORABLE_PROPERTIES);
+                $keys = array_keys(static::EXPLORABLE_VISIBLE);
                 if (!$keys) {
                     // Fallback: use actual declared properties.
                     // get_object_vars() also includes unitialized (null) vars.
                     $keys = array_keys(get_object_vars($this));
-                    $keys = array_diff($keys, ['explorableCursor'], array_keys(static::NON_EXPLORABLE_PROPERTIES));
                 }
+                // Subtract hidden properties.
+                $keys = array_diff($keys, ['explorableCursor'], array_keys(static::EXPLORABLE_HIDDEN));
                 // Save copy for class.
                 static::$explorableKeys = $keys;
             }
