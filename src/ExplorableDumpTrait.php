@@ -80,6 +80,22 @@ trait ExplorableDumpTrait
         return $a;
     }
 
+    /**
+     * Make var_dump() make sense.
+     *
+     * @return array
+     */
+    public function __debugInfo() : array
+    {
+        // Erring explorable property shan't make this instance un-dumpable.
+        try {
+            return $this->toArray(true);
+        }
+        catch (\Throwable $ignore) {
+            return $this->toArray();
+        }
+    }
+
 
     // JsonSerializable.--------------------------------------------------------
 

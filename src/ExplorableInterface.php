@@ -122,6 +122,15 @@ interface ExplorableInterface extends \Countable, \Iterator /*~ Traversable*/, \
      */
     public function toArray(bool $recursive = false) : array;
 
+    /**
+     * Make var_dump() make sense.
+     *
+     * @see ExplorableInterface::toArray()
+     *
+     * @return array
+     */
+    public function __debugInfo() : array;
+
 
     // JsonSerializable.--------------------------------------------------------
 
