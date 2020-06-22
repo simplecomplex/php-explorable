@@ -62,8 +62,10 @@ abstract class Explorable implements ExplorableInterface
      *
      * Shared by all instances of a class, but only populated once.
      *
-     * IMPORTANT: Extending class must override, declaring protected:
+     * IMPORTANT: Extending class must override, declaring _protected_:
      * protected static $explorableKeys;
+     * Otherwise parent and child would end up using the same list,
+     * leaving parent or child in wrong state.
      *
      * Is private to force child class override.
      *
@@ -90,9 +92,9 @@ abstract class Explorable implements ExplorableInterface
      * @see Explorable::$explorableKeys
      *
      * If class var explorableKeys is null:
-     * Uses keys of class constant EXPLORABLE_PROPERTIES, unless empty.
-     * Uses names of actual declared instance properties as fallback,
-     * except for keys listed in class constant NON_EXPLORABLE_PROPERTIES.
+     * Uses keys of class constant EXPLORABLE_VISIBLE, unless empty.
+     * Uses names of actual declared instance properties as fallback.
+     * Subtracts keys listed in class constant EXPLORABLE_HIDDEN.
      * @see Explorable::EXPLORABLE_VISIBLE
      * @see Explorable::EXPLORABLE_HIDDEN
      */

@@ -63,10 +63,9 @@ trait ExplorableBaseTrait
      *
      * Shared by all instances of a class, but only populated once.
      *
-     * IMPORTANT: Extending class must override, declaring protected:
-     * protected static $explorableKeys;
-     *
-     * Is private to force child class override.
+     * IMPORTANT: Must be declared explicitly in every explorable class,
+     * otherwise parent and child would end up using the same list,
+     * leaving parent or child in wrong state.
      *
      * @var string[]|null
      */
@@ -91,9 +90,9 @@ trait ExplorableBaseTrait
      * @see Explorable::$explorableKeys
      *
      * If class var explorableKeys is null:
-     * Uses keys of class constant EXPLORABLE_PROPERTIES, unless empty.
-     * Uses names of actual declared instance properties as fallback,
-     * except for keys listed in class constant NON_EXPLORABLE_PROPERTIES.
+     * Uses keys of class constant EXPLORABLE_VISIBLE, unless empty.
+     * Uses names of actual declared instance properties as fallback.
+     * Subtracts keys listed in class constant EXPLORABLE_HIDDEN.
      * @see Explorable::EXPLORABLE_VISIBLE
      * @see Explorable::EXPLORABLE_HIDDEN
      */
