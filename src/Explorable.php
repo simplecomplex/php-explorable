@@ -65,7 +65,7 @@ abstract class Explorable implements ExplorableInterface
      * IMPORTANT: Extending class must override, declaring _protected_:
      * protected static $explorableKeys;
      * Otherwise parent and child would end up using the same list,
-     * leaving parent or child in wrong state.
+     * leaving parent or child with wrong property list.
      *
      * Is private to force child class override.
      *

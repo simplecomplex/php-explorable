@@ -65,7 +65,7 @@ trait ExplorableBaseTrait
      *
      * IMPORTANT: Must be declared explicitly in every explorable class,
      * otherwise parent and child would end up using the same list,
-     * leaving parent or child in wrong state.
+     * leaving parent or child with wrong property lists.
      *
      * @var string[]|null
      */
