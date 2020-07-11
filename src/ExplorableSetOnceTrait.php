@@ -10,7 +10,8 @@ declare(strict_types=1);
 namespace SimpleComplex\Explorable;
 
 /**
- * Trait providing protected member getter and setter.
+ * Trait providing protected member setter
+ * which only allows properties to be set once.
  *
  * @see Explorable
  *
@@ -20,33 +21,10 @@ namespace SimpleComplex\Explorable;
  *
  * @package SimpleComplex\Explorable
  */
-trait ExplorableGetSetTrait
+trait ExplorableSetOnceTrait
 {
     /**
-     * Get protected property.
-     *
-     * @param string $key
-     *
-     * @return mixed
-     *
-     * @throws \OutOfBoundsException
-     *      If no such instance property.
-     */
-    public function __get(string $key)
-    {
-        // IMPORTANT: do same lazy preparation in overriding method.
-        if (!$this->explorableCursor) {
-            $this->explorablePrepare();
-        }
-
-        if (in_array($key, $this->explorableCursor)) {
-            return $this->{$key};
-        }
-        throw new \OutOfBoundsException(get_class($this) . ' instance exposes no property[' . $key . '].');
-    }
-
-    /**
-     * Attempt to set protected property.
+     * Allows setting protected property once.
      *
      * @param string $key
      * @param mixed|null $value
@@ -66,6 +44,10 @@ trait ExplorableGetSetTrait
         }
 
         if (in_array($key, $this->explorableCursor)) {
+            if ($this->{$key} === null) {
+                $this->{$key} = $value;
+                return;
+            }
             throw new \RuntimeException(get_class($this) . ' instance property[' . $key . '] is read-only.');
         }
         throw new \OutOfBoundsException(get_class($this) . ' instance exposes no property[' . $key . '].');

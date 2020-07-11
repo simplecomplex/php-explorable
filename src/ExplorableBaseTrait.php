@@ -13,7 +13,7 @@ namespace SimpleComplex\Explorable;
  * Trait providing means for explorable properties discovery
  * plus \Countable, \Iterator implementation.
  *
- * Using class must declare class constants:
+ * Using class may declare class constants:
  * const EXPLORABLE_VISIBLE = [];
  * const EXPLORABLE_HIDDEN = [];
  *
@@ -95,6 +95,10 @@ trait ExplorableBaseTrait
      * Subtracts keys listed in class constant EXPLORABLE_HIDDEN.
      * @see Explorable::EXPLORABLE_VISIBLE
      * @see Explorable::EXPLORABLE_HIDDEN
+     *
+     * Unlike the Explorable class ditto this method does not require neither
+     * EXPLORABLE_VISIBLE nor EXPLORABLE_HIDDEN.
+     * @see Explorable::explorablePrepare()
      */
     protected function explorablePrepare() : void
     {
@@ -108,14 +112,20 @@ trait ExplorableBaseTrait
             else {
                 // This instance _is_ the first.
                 // Try copying from class constant.
-                $keys = array_keys(static::EXPLORABLE_VISIBLE);
+                $keys = defined('static::EXPLORABLE_VISIBLE') ? array_keys(static::EXPLORABLE_VISIBLE) : [];
                 if (!$keys) {
                     // Fallback: use actual declared properties.
                     // get_object_vars() also includes unitialized (null) vars.
                     $keys = array_keys(get_object_vars($this));
                 }
                 // Subtract hidden properties.
-                $keys = array_diff($keys, ['explorableCursor'], array_keys(static::EXPLORABLE_HIDDEN));
+                if (defined('static::EXPLORABLE_HIDDEN')) {
+                    $keys = array_diff($keys, ['explorableCursor'], array_keys(static::EXPLORABLE_HIDDEN));
+                }
+                else {
+                    $keys = array_diff($keys, ['explorableCursor']);
+                }
+
                 // Save copy for class.
                 static::$explorableKeys = $keys;
             }

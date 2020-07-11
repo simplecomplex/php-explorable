@@ -150,7 +150,7 @@ abstract class Explorable implements ExplorableInterface
     }
 
     /**
-     * Attempt to set protected property.
+     * Denies setting protected property unconditionally.
      *
      * @param string $key
      * @param mixed|null $value
