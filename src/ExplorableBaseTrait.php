@@ -2,7 +2,7 @@
 /**
  * SimpleComplex PHP Explorable
  * @link      https://github.com/simplecomplex/php-explorable
- * @copyright Copyright (c) 2017-2020 Jacob Friis Mathiasen
+ * @copyright Copyright (c) 2017-2021 Jacob Friis Mathiasen
  * @license   https://github.com/simplecomplex/php-explorable/blob/master/LICENSE (MIT License)
  */
 declare(strict_types=1);
@@ -39,7 +39,7 @@ trait ExplorableBaseTrait
 //     *
 //     * @var mixed[]
 //     */
-//    const EXPLORABLE_VISIBLE = [];
+//    public const EXPLORABLE_VISIBLE = [];
 //
 //    /**
 //     * Optional list of hidden properties when getting, counting
@@ -55,7 +55,7 @@ trait ExplorableBaseTrait
 //     *
 //     * @var mixed[]
 //     */
-//    const EXPLORABLE_HIDDEN = [];
+//    public const EXPLORABLE_HIDDEN = [];
 
     /**
      * List of names of properties accessible when count()'ing and foreach'ing,
@@ -63,13 +63,14 @@ trait ExplorableBaseTrait
      *
      * Shared by all instances of a class, but only populated once.
      *
-     * IMPORTANT: Must be declared explicitly in every explorable class,
-     * otherwise parent and child would end up using the same list,
-     * leaving parent or child with wrong property lists.
+     * IMPORTANT: Extending class must override, declaring _protected_:
+     * protected static array $explorableKeys = [];
+     * Otherwise parent and child would end up using the same list,
+     * leaving parent or child with wrong property list.
      *
-     * @var string[]|null
+     * @var string[]
      */
-    protected static $explorableKeys;
+    protected static array $explorableKeys = [];
 
     /**
      * Copy of class var explorableKeys used as cursor for iteration.
@@ -78,7 +79,7 @@ trait ExplorableBaseTrait
      *
      * @var string[]
      */
-    protected $explorableCursor = [];
+    protected array $explorableCursor = [];
 
 
     /**
@@ -105,7 +106,7 @@ trait ExplorableBaseTrait
         // No work if cursor already populated.
         if (!$this->explorableCursor) {
             // Try copying from class var; this instance may not be the first.
-            if (static::$explorableKeys !== null) {
+            if (static::$explorableKeys) {
                 // Uses child class override.
                 $keys = static::$explorableKeys;
             }

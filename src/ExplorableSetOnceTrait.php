@@ -2,7 +2,7 @@
 /**
  * SimpleComplex PHP Explorable
  * @link      https://github.com/simplecomplex/php-explorable
- * @copyright Copyright (c) 2017-2020 Jacob Friis Mathiasen
+ * @copyright Copyright (c) 2017-2021 Jacob Friis Mathiasen
  * @license   https://github.com/simplecomplex/php-explorable/blob/master/LICENSE (MIT License)
  */
 declare(strict_types=1);

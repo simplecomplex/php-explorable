@@ -2,7 +2,7 @@
 /**
  * SimpleComplex PHP Explorable
  * @link      https://github.com/simplecomplex/php-explorable
- * @copyright Copyright (c) 2017-2020 Jacob Friis Mathiasen
+ * @copyright Copyright (c) 2017-2021 Jacob Friis Mathiasen
  * @license   https://github.com/simplecomplex/php-explorable/blob/master/LICENSE (MIT License)
  */
 declare(strict_types=1);
@@ -24,9 +24,9 @@ use SimpleComplex\Explorable\ExplorableDumpTrait;
  * @mixin \SimpleComplex\Explorable\Explorable
  *
  *
- * @property $a
- * @property $b
- * @property $c
+ * @property string $a
+ * @property string $b
+ * @property string $c
  *
  * @package SimpleComplex\Explorable
  */
@@ -41,9 +41,11 @@ class ExplorableSetOnce
     use ExplorableSetOnceTrait;
     use ExplorableDumpTrait;
 
-    protected $a;
+    protected static array $explorableKeys = [];
 
-    protected $b;
+    protected ?string $a = null;
 
-    protected $c;
+    protected ?string $b = null;
+
+    protected ?string $c = null;
 }
