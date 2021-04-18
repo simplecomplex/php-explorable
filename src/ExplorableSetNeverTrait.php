@@ -38,7 +38,7 @@ trait ExplorableSetNeverTrait
      */
     public function __set(string $key, $value)
     {
-        // IMPORTANT: do same lazy preparation in overriding method.
+        // Important: do same lazy preparation in overriding method.
         if (!$this->explorableCursor) {
             $this->explorablePrepare();
         }

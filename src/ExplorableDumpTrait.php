@@ -34,6 +34,7 @@ trait ExplorableDumpTrait
      */
     public function toObject(bool $recursive = false) : \stdClass
     {
+        // Important: do same lazy preparation in overriding method.
         if (!$this->explorableCursor) {
             $this->explorablePrepare();
         }
@@ -63,6 +64,7 @@ trait ExplorableDumpTrait
      */
     public function toArray(bool $recursive = false) : array
     {
+        // Important: do same lazy preparation in overriding method.
         if (!$this->explorableCursor) {
             $this->explorablePrepare();
         }

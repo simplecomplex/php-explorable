@@ -34,7 +34,7 @@ trait ExplorableGetTrait
      */
     public function __get(string $key)
     {
-        // IMPORTANT: do same lazy preparation in overriding method.
+        // Important: do same lazy preparation in overriding method.
         if (!$this->explorableCursor) {
             $this->explorablePrepare();
         }

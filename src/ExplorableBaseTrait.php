@@ -145,6 +145,7 @@ trait ExplorableBaseTrait
      */
     public function __isset($key) : bool
     {
+        // Important: do same lazy preparation in overriding method.
         if (!$this->explorableCursor) {
             $this->explorablePrepare();
         }
@@ -161,6 +162,7 @@ trait ExplorableBaseTrait
      */
     public function count() : int
     {
+        // Important: do same lazy preparation in overriding method.
         if (!$this->explorableCursor) {
             $this->explorablePrepare();
         }
@@ -178,6 +180,7 @@ trait ExplorableBaseTrait
      */
     public function rewind() : void
     {
+        // Important: do same lazy preparation in overriding method.
         if (!$this->explorableCursor) {
             $this->explorablePrepare();
         }
@@ -192,6 +195,7 @@ trait ExplorableBaseTrait
      */
     public function key() : string
     {
+        // Important: do same lazy preparation in overriding method.
         if (!$this->explorableCursor) {
             $this->explorablePrepare();
         }
@@ -209,6 +213,7 @@ trait ExplorableBaseTrait
      */
     public function current()
     {
+        // Important: do same lazy preparation in overriding method.
         if (!$this->explorableCursor) {
             $this->explorablePrepare();
         }
@@ -223,6 +228,7 @@ trait ExplorableBaseTrait
      */
     public function next() : void
     {
+        // Important: do same lazy preparation in overriding method.
         if (!$this->explorableCursor) {
             $this->explorablePrepare();
         }
@@ -237,6 +243,7 @@ trait ExplorableBaseTrait
      */
     public function valid() : bool
     {
+        // Important: do same lazy preparation in overriding method.
         if (!$this->explorableCursor) {
             $this->explorablePrepare();
         }

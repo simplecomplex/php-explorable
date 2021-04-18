@@ -138,7 +138,7 @@ abstract class Explorable implements ExplorableInterface
      */
     public function __get(string $key)
     {
-        // IMPORTANT: do same lazy preparation in overriding method.
+        // Important: do same lazy preparation in overriding method.
         if (!$this->explorableCursor) {
             $this->explorablePrepare();
         }
@@ -164,7 +164,7 @@ abstract class Explorable implements ExplorableInterface
      */
     public function __set(string $key, $value)
     {
-        // IMPORTANT: do same lazy preparation in overriding method.
+        // Important: do same lazy preparation in overriding method.
         if (!$this->explorableCursor) {
             $this->explorablePrepare();
         }
@@ -186,6 +186,7 @@ abstract class Explorable implements ExplorableInterface
      */
     public function __isset($key) : bool
     {
+        // Important: do same lazy preparation in overriding method.
         if (!$this->explorableCursor) {
             $this->explorablePrepare();
         }
@@ -202,6 +203,7 @@ abstract class Explorable implements ExplorableInterface
      */
     public function count() : int
     {
+        // Important: do same lazy preparation in overriding method.
         if (!$this->explorableCursor) {
             $this->explorablePrepare();
         }
@@ -219,6 +221,7 @@ abstract class Explorable implements ExplorableInterface
      */
     public function rewind() : void
     {
+        // Important: do same lazy preparation in overriding method.
         if (!$this->explorableCursor) {
             $this->explorablePrepare();
         }
@@ -233,6 +236,7 @@ abstract class Explorable implements ExplorableInterface
      */
     public function key() : string
     {
+        // Important: do same lazy preparation in overriding method.
         if (!$this->explorableCursor) {
             $this->explorablePrepare();
         }
@@ -250,6 +254,7 @@ abstract class Explorable implements ExplorableInterface
      */
     public function current()
     {
+        // Important: do same lazy preparation in overriding method.
         if (!$this->explorableCursor) {
             $this->explorablePrepare();
         }
@@ -264,6 +269,7 @@ abstract class Explorable implements ExplorableInterface
      */
     public function next() : void
     {
+        // Important: do same lazy preparation in overriding method.
         if (!$this->explorableCursor) {
             $this->explorablePrepare();
         }
@@ -278,6 +284,7 @@ abstract class Explorable implements ExplorableInterface
      */
     public function valid() : bool
     {
+        // Important: do same lazy preparation in overriding method.
         if (!$this->explorableCursor) {
             $this->explorablePrepare();
         }
@@ -302,6 +309,7 @@ abstract class Explorable implements ExplorableInterface
      */
     public function toObject(bool $recursive = false) : \stdClass
     {
+        // Important: do same lazy preparation in overriding method.
         if (!$this->explorableCursor) {
             $this->explorablePrepare();
         }
@@ -331,6 +339,7 @@ abstract class Explorable implements ExplorableInterface
      */
     public function toArray(bool $recursive = false) : array
     {
+        // Important: do same lazy preparation in overriding method.
         if (!$this->explorableCursor) {
             $this->explorablePrepare();
         }
