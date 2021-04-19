@@ -44,12 +44,13 @@ class ExplorablesDeclared extends Explorable
 ```
 
 ### Class relying on property table discovery
-The properties will be discovered on-demand, in `explorablePrepare()`.
+The properties will be discovered on-demand, via `explorablePrepare()`.
 
 All instance vars must be nullable and declared as null
 (`protected ?string $foo = null;`).<br>
-Otherwise risk of getting '::$foo must not be accessed before initialization'
-error, or the instance vars simply won't get discovered (because not set to a value (null)).
+Otherwise risk of getting "_::$foo must not be accessed before initialization_"
+error, or the instance vars simply won't get discovered (because not set to a
+value (null)).
 
 ```php
 <?php

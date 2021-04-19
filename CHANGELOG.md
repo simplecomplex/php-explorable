@@ -4,7 +4,7 @@ All notable changes to **simplecomplex/explorable** will be documented in this f
 using the [Keep a CHANGELOG](https://keepachangelog.com/) principles.
 
 
-## [Unreleased]
+## [1.0.0] - 2021-04-19
 
 ### Changed
 - Require PHP ^7.4 (or ^8.0).
