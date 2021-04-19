@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 namespace SimpleComplex\Tests\Explorable;
 
-use SimpleComplex\Explorable\Explorable;
-use SimpleComplex\Explorable\ExplorableTrait;
+use SimpleComplex\Explorable\ExplorableByDiscovery;
+use SimpleComplex\Explorable\ExplorableByDiscoveryTrait;
 
 /**
  * @property-read ?int $dit
@@ -18,9 +18,9 @@ use SimpleComplex\Explorable\ExplorableTrait;
  *
  * @package SimpleComplex\Tests\Explorable
  */
-class ExplorablesDiscoverable extends Explorable
+class ExplorablesDiscoverable extends ExplorableByDiscovery
 {
-    use ExplorableTrait;
+    use ExplorableByDiscoveryTrait;
 
     protected ?int $dit = null;
 

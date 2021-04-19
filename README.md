@@ -16,13 +16,13 @@ Extending `Explorable` facilitates:
 
 ## Usage
 
-### Class declaring it's properties
+### Class declaring it's properties in constant
 Property names hardcoded in constant `EXPLORABLE_VISIBLE`.
+
 ```php
 <?php
 
 use SimpleComplex\Explorable\Explorable;
-use SimpleComplex\Explorable\ExplorableTrait;
 
 /**
  * @property-read string $foo
@@ -30,8 +30,6 @@ use SimpleComplex\Explorable\ExplorableTrait;
  */
 class ExplorablesDeclared extends Explorable
 {
-    use ExplorableTrait;
-
     public const EXPLORABLE_VISIBLE = [
         'foo' => true,
         'bar' => true,
@@ -44,7 +42,8 @@ class ExplorablesDeclared extends Explorable
 ```
 
 ### Class relying on property table discovery
-The properties will be discovered on-demand, via `explorablePrepare()`.
+The properties will be discovered on-demand, via `ExplorableByDiscovery`
+constructor.
 
 All instance vars must be nullable and declared as null
 (`protected ?string $foo = null;`).<br>
@@ -55,8 +54,8 @@ value (null)).
 ```php
 <?php
 
-use SimpleComplex\Explorable\Explorable;
-use SimpleComplex\Explorable\ExplorableTrait;
+use SimpleComplex\Explorable\ExplorableByDiscovery;
+use SimpleComplex\Explorable\ExplorableByDiscoveryTrait;
 
 /**
  * @property-read string $foo
@@ -64,7 +63,7 @@ use SimpleComplex\Explorable\ExplorableTrait;
  */
 class ExplorablesDiscoverable extends Explorable
 {
-    use ExplorableTrait;
+    use ExplorableByDiscoveryTrait;
 
     protected ?string $foo = null;
 

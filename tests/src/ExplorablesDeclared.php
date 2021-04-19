@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace SimpleComplex\Tests\Explorable;
 
 use SimpleComplex\Explorable\Explorable;
-use SimpleComplex\Explorable\ExplorableTrait;
+use SimpleComplex\Explorable\ExplorableByDiscoveryTrait;
 
 /**
  * @property-read string $foo
@@ -20,7 +20,7 @@ use SimpleComplex\Explorable\ExplorableTrait;
  */
 class ExplorablesDeclared extends Explorable
 {
-    use ExplorableTrait;
+    use ExplorableByDiscoveryTrait;
 
     public const EXPLORABLE_VISIBLE = [
         'foo' => true,

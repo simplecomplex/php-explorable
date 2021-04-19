@@ -10,16 +10,16 @@ declare(strict_types=1);
 namespace SimpleComplex\Explorable;
 
 /**
- * Trait for completing a class that extends Explorable.
+ * Trait for completing a class that extends ExplorableByDiscovery.
  *
- * @see Explorable
+ * @see ExplorableByDiscovery
  *
  * Tell IDE about apparantly absent properties.
- * @mixin Explorable
+ * @mixin ExplorableByDiscovery
  *
  * @package SimpleComplex\Explorable
  */
-trait ExplorableTrait
+trait ExplorableByDiscoveryTrait
 {
     /**
      * List of names of properties accessible when count()'ing and foreach'ing.

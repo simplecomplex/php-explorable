@@ -9,20 +9,14 @@ declare(strict_types=1);
 
 namespace SimpleComplex\Tests\Explorable;
 
-use SimpleComplex\Explorable\ExplorableBaseTrait;
-use SimpleComplex\Explorable\ExplorableGetTrait;
+use SimpleComplex\Explorable\ExplorableByDiscovery;
+use SimpleComplex\Explorable\ExplorableByDiscoveryTrait;
 use SimpleComplex\Explorable\ExplorableSetOnceTrait;
-use SimpleComplex\Explorable\ExplorableDumpTrait;
 
 /**
  * Trait providing setter which only allows properties to be set once.
  *
- * @see Explorable
- *
- *
- * Tell IDE about apparantly absent properties.
- * @mixin \SimpleComplex\Explorable\Explorable
- *
+ * @see ExplorableByDiscovery
  *
  * @property string $a
  * @property string $b
@@ -30,18 +24,10 @@ use SimpleComplex\Explorable\ExplorableDumpTrait;
  *
  * @package SimpleComplex\Explorable
  */
-class ExplorableSetOnce
+class ExplorableSetOnce extends ExplorableByDiscovery
 {
-
-    //public const EXPLORABLE_VISIBLE = [];
-    //public const EXPLORABLE_HIDDEN = [];
-
-    use ExplorableBaseTrait;
-    use ExplorableGetTrait;
+    use ExplorableByDiscoveryTrait;
     use ExplorableSetOnceTrait;
-    use ExplorableDumpTrait;
-
-    protected static array $explorableKeys = [];
 
     protected ?string $a = null;
 

@@ -13,8 +13,9 @@ namespace SimpleComplex\Explorable;
  * Trait providing protected member setter
  * which only allows properties to be set once.
  *
- * @see Explorable
+ * BEWARE: All properties must be nullable and declared having value null.
  *
+ * @see Explorable
  *
  * Tell IDE about apparantly absent properties.
  * @mixin Explorable
@@ -38,12 +39,8 @@ trait ExplorableSetOnceTrait
      */
     public function __set(string $key, $value)
     {
-        // Important: do same lazy preparation in overriding method.
-        if (!$this->explorableCursor) {
-            $this->explorablePrepare();
-        }
-
         if (in_array($key, $this->explorableCursor)) {
+            // Fails if the propterty is uninitialized (not declared as null).
             if ($this->{$key} === null) {
                 $this->{$key} = $value;
                 return;
