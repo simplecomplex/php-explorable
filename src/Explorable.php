@@ -36,7 +36,7 @@ abstract class Explorable implements ExplorableInterface
      *   'childvar' => true,
      * ] + ParentClass::EXPLORABLE_VISIBLE;
      *
-     * @var mixed[]
+     * @var array
      */
     public const EXPLORABLE_VISIBLE = [];
 
@@ -52,13 +52,12 @@ abstract class Explorable implements ExplorableInterface
      *   'childvar' => true,
      * ] + ParentClass::EXPLORABLE_HIDDEN;
      *
-     * @var mixed[]
+     * @var array
      */
     public const EXPLORABLE_HIDDEN = [];
 
     /**
-     * List of names of properties accessible when count()'ing and foreach'ing,
-     * by class name.
+     * List of names of properties accessible when count()'ing and foreach'ing.
      *
      * Shared by all instances of a class, but only populated once.
      *

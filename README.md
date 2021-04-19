@@ -16,11 +16,59 @@ Extending `Explorable` facilitates:
 
 ## Usage
 
+### Class declaring it's properties
+Property names hardcoded in constant `EXPLORABLE_VISIBLE`.
 ```php
 <?php
 
-use 
+use SimpleComplex\Explorable\Explorable;
+use SimpleComplex\Explorable\ExplorableTrait;
 
+/**
+ * @property-read string $foo
+ * @property-read string $bar
+ */
+class ExplorablesDeclared extends Explorable
+{
+    use ExplorableTrait;
+
+    public const EXPLORABLE_VISIBLE = [
+        'foo' => true,
+        'bar' => true,
+    ];
+
+    protected string $foo;
+
+    protected string $bar;
+}
+```
+
+### Class relying on property table discovery
+The properties will be discovered on-demand, in `explorablePrepare()`.
+
+All instance vars must be nullable and declared as null
+(`protected ?string $foo = null;`).<br>
+Otherwise risk of getting '::$foo must not be accessed before initialization'
+error, or the instance vars simply won't get discovered (because not set to a value (null)).
+
+```php
+<?php
+
+use SimpleComplex\Explorable\Explorable;
+use SimpleComplex\Explorable\ExplorableTrait;
+
+/**
+ * @property-read string $foo
+ * @property-read string $bar
+ */
+class ExplorablesDiscoverable extends Explorable
+{
+    use ExplorableTrait;
+
+    protected ?string $foo = null;
+
+    protected ?string $bar = null;
+}
 ```
 
 ## MIT licensed
@@ -30,7 +78,7 @@ use
 
 ## Requirements ##
 
-- PHP ^7.2
+- PHP ^7.4 || ^8.0
 
 ### Development (require-dev)
 

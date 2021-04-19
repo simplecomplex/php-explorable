@@ -14,7 +14,6 @@ namespace SimpleComplex\Explorable;
  *
  * @see Explorable
  *
- *
  * Tell IDE about apparantly absent properties.
  * @mixin Explorable
  *

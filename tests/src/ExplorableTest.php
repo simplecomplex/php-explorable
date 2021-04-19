@@ -68,8 +68,33 @@ class ExplorableTest extends TestCase
 
     public function testExtension()
     {
-        $extension = new Extension('the foo', 'the bar');
-        static::assertEquals('the foo', $extension->foo);
-        static::assertEquals('the bar', $extension->bar);
+        $extension = new ExplorablesDeclared();
+//        $values = [];
+//        foreach ($extension as $value) {
+//            $values[] = $value ?? '(null)';
+//        }
+//        static::assertEquals('(null), (null)', join(', ', $values));
+
+        $extension->populate('the foo', 'the bar');
+        $values = [];
+        foreach ($extension as $value) {
+            $values[] = $value ?? '(null)';
+        }
+        static::assertEquals('the foo, the bar', join(', ', $values));
+
+        $extension = new ExplorablesDiscoverable();
+        $values = [];
+        foreach ($extension as $value) {
+            $values[] = $value ?? '(null)';
+        }
+        static::assertEquals('(null), (null)', join(', ', $values));
+
+        $extension->populate(1, 2);
+        $values = [];
+        foreach ($extension as $value) {
+            $values[] = $value ?? '(null)';
+        }
+        static::assertEquals('1, 2', join(', ', $values));
     }
+
 }

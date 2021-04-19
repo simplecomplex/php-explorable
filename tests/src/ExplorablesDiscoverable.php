@@ -10,29 +10,26 @@ declare(strict_types=1);
 namespace SimpleComplex\Tests\Explorable;
 
 use SimpleComplex\Explorable\Explorable;
-
+use SimpleComplex\Explorable\ExplorableTrait;
 
 /**
- * @property-read string $foo
- * @property-read string $bar
+ * @property-read ?int $dit
+ * @property-read ?int $dat
  *
  * @package SimpleComplex\Tests\Explorable
  */
-class Extension extends Explorable
+class ExplorablesDiscoverable extends Explorable
 {
-    protected static array $explorableKeys = [];
+    use ExplorableTrait;
 
-    public const EXPLORABLE_VISIBLE = [
-        'foo' => true,
-        'bar' => true,
-    ];
+    protected ?int $dit = null;
 
-    protected string $foo;
-    protected string $bar;
+    protected ?int $dat = null;
 
-    public function __construct(string $foo, string $bar)
+    public function populate(int $dit, int $dat)
     {
-        $this->foo = $foo;
-        $this->bar = $bar;
+        $this->dit = $dit;
+        $this->dat = $dat;
     }
+
 }
